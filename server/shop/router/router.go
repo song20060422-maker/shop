@@ -78,6 +78,9 @@ func InitShopRouter(group *gin.RouterGroup, g *service.ServiceGroup, cfg config.
 			switch name {
 			case "buyer":
 				data, err = web.Buyer()
+			case "payment":
+				// 模拟收银台页（原型对齐）：微信模拟渠道通知演示入口
+				data, err = web.Payment()
 			default:
 				err = errors.New("未知页面")
 			}
@@ -93,6 +96,16 @@ func InitShopRouter(group *gin.RouterGroup, g *service.ServiceGroup, cfg config.
 	group.GET("/index.html", func(c *gin.Context) { c.Redirect(http.StatusFound, "/shop") })
 	group.GET("/shop", page("buyer"))
 	group.GET("/shop/", page("buyer"))
+	// 模拟收银台页与页面静态资源（原型对齐，随二进制发布）
+	group.GET("/shop/payment", page("payment"))
+	group.GET("/shop/assets/:name", func(c *gin.Context) {
+		data, contentType, ok := web.Asset(c.Param("name"))
+		if !ok {
+			c.String(http.StatusNotFound, "资源不存在")
+			return
+		}
+		c.Data(http.StatusOK, contentType, data)
+	})
 	// 后台三页入口已迁移到 GVA 管理端：命中旧路径时提示去向，避免静默 404
 	adminHint := func(page string) gin.HandlerFunc {
 		return func(c *gin.Context) {

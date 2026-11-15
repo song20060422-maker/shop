@@ -482,23 +482,33 @@ func TestReportDetailTrailLedgerAndSummary(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if sum.TotalPaidCents != 30000 {
-		t.Fatalf("已收款应含迟到支付（30000）: %d", sum.TotalPaidCents)
+	// 增量续写 R5 修复后：有效收款与异常渠道收款分开显示（OPS-03/BR-14），
+	// 迟到支付 10000 分不再并入 TotalPaidCents，改入 TotalAbnormalCents。
+	if sum.TotalPaidCents != 20000 {
+		t.Fatalf("有效收款应不含迟到支付（20000）: %d", sum.TotalPaidCents)
+	}
+	if sum.TotalAbnormalCents != 10000 {
+		t.Fatalf("异常收款应独立合计（10000）: %d", sum.TotalAbnormalCents)
 	}
 	if sum.TotalRefundedCents != 0 {
 		t.Fatalf("未退款时应为 0: %d", sum.TotalRefundedCents)
 	}
 	var prodPaid int64
+	var prodAbnormal int64
 	for _, p := range sum.Products {
 		if p.SKU == "SKU-A" {
 			prodPaid = p.PaidCents
+			prodAbnormal = p.AbnormalCents
 			if p.Available != 3 {
 				t.Fatalf("商品可售数量错误: %d", p.Available)
 			}
 		}
 	}
-	if prodPaid != 30000 {
-		t.Fatalf("商品维度已收款应含异常收款: %d", prodPaid)
+	if prodPaid != 20000 {
+		t.Fatalf("商品维度有效收款应为 20000: %d", prodPaid)
+	}
+	if prodAbnormal != 10000 {
+		t.Fatalf("商品维度异常收款应为 10000: %d", prodAbnormal)
 	}
 	if sum.OrderCount != 2 {
 		t.Fatalf("订单总数错误: %d", sum.OrderCount)

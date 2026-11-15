@@ -38,7 +38,10 @@ type Jwt struct {
 // Shop 业务参数
 type Shop struct {
 	OrderTimeoutMinutes int    `yaml:"order-timeout-minutes"`
-	PayNotifySecret     string `yaml:"pay-notify-secret"`
+	// CloseExpiredIntervalSeconds 超时关单后台调度间隔（秒），<=0 时回落默认值；
+	// 生产环境靠该定时任务关闭到期待付款订单并释放占用（PROD-10）。
+	CloseExpiredIntervalSeconds int    `yaml:"close-expired-interval-seconds"`
+	PayNotifySecret             string `yaml:"pay-notify-secret"`
 	DemoPassword        string `yaml:"demo-password"`
 	DemoMode            bool   `yaml:"demo-mode"` // 演示数据重置开关，生产必须为 false
 	// PayChannel 支付渠道选择：simulated（默认，模拟渠道，验收口径不变）| alipay（支付宝沙箱真实渠道，
@@ -131,6 +134,11 @@ func Load(path string) (Config, error) {
 			cfg.Shop.OrderTimeoutMinutes = n
 		}
 	}
+	if v := os.Getenv("SHOP_CLOSE_EXPIRED_SECONDS"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			cfg.Shop.CloseExpiredIntervalSeconds = n
+		}
+	}
 	return cfg, nil
 }
 
@@ -141,6 +149,15 @@ func (c Config) OrderTimeout() time.Duration {
 		return 10 * time.Minute
 	}
 	return time.Duration(c.Shop.OrderTimeoutMinutes) * time.Minute
+}
+
+// CloseExpiredInterval 超时关单调度间隔，缺省 30 秒。
+
+func (c Config) CloseExpiredInterval() time.Duration {
+	if c.Shop.CloseExpiredIntervalSeconds <= 0 {
+		return 30 * time.Second
+	}
+	return time.Duration(c.Shop.CloseExpiredIntervalSeconds) * time.Second
 }
 
 // AllowRefundByChannel 渠道当前是否受理退款成功。

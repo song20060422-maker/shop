@@ -73,6 +73,19 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 		Group("product_id").Scan(&shipRows).Error; err != nil {
 		return out, err
 	}
+	// 占用量口径改为按订单状态直查（增量续写【修改原因=R5】）：
+	// 原公式 initial_stock-available-shipped 在运营补货/减库后失衡；
+	// 状态说明 4.2 定义占用量 = 尚未关闭且未发货订单的数量合计。
+	var occRows []aggRow
+	if err := s.deps.DB.Model(&model.Order{}).
+		Select("product_id AS product_id, COALESCE(SUM(qty),0) AS qty").
+		Where("status IN ?", []string{
+			model.OrderStatusPendingPayment, model.OrderStatusPaid,
+			model.OrderStatusRefundRequested, model.OrderStatusRefundFailed,
+		}).
+		Group("product_id").Scan(&occRows).Error; err != nil {
+		return out, err
+	}
 	var paidRows []aggRow
 	if err := s.deps.DB.Table("payments").
 		Select("orders.product_id AS product_id, COALESCE(SUM(payments.amount_cents),0) AS cents").
@@ -88,8 +101,8 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 		Group("orders.product_id").Scan(&refundRows).Error; err != nil {
 		return out, err
 	}
-	// 迟到支付：渠道已收款但订单已关闭，不会写入 payments；金额按异常收款记录计入，
-	// 避免"渠道已收款而商城报表查不到"的盲区（题面规则 8）。
+	// 迟到支付：渠道已收款但订单已关闭，不会写入 payments；金额按异常收款记录聚合，
+	// 独立列示不并入有效收款，避免"渠道已收款而商城报表查不到"的盲区（题面规则 8）。
 	var abnormalRows []aggRow
 	if err := s.deps.DB.Table("abnormal_payments").
 		Select("orders.product_id AS product_id, COALESCE(SUM(abnormal_payments.amount_cents),0) AS cents").
@@ -111,19 +124,31 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 		}
 		return 0
 	}
+	occupiedOf := func(id uint64) int64 {
+		for _, r := range occRows {
+			if r.ProductID == id {
+				return r.Qty
+			}
+		}
+		return 0
+	}
+	// 有效收款只统计成功记款 payments；异常渠道收款单独列示（增量续写【修改原因=R5】，
+	// OPS-03/BR-14：不得把迟到支付等异常金额并入有效收款，避免隐藏）。
 	paidOf := func(id uint64) int64 {
-		var cents int64
 		for _, r := range paidRows {
 			if r.ProductID == id {
-				cents += r.Cents
+				return r.Cents
 			}
 		}
+		return 0
+	}
+	abnormalOf := func(id uint64) int64 {
 		for _, r := range abnormalRows {
 			if r.ProductID == id {
-				cents += r.Cents
+				return r.Cents
 			}
 		}
-		return cents
+		return 0
 	}
 	refundedOf := func(id uint64) int64 {
 		for _, r := range refundRows {
@@ -136,7 +161,7 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 
 	for _, p := range products {
 		shipped := shippedOf(p.ID)
-		occupied := p.InitialStock - p.Available - int(shipped)
+		occupied := int(occupiedOf(p.ID))
 		if occupied < 0 {
 			occupied = 0
 		}
@@ -151,6 +176,7 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 			Occupied:      occupied,
 			ShippedQty:    int(shipped),
 			PaidCents:     paidOf(p.ID),
+			AbnormalCents: abnormalOf(p.ID),
 			RefundedCents: refundedOf(p.ID),
 		})
 	}
@@ -159,7 +185,8 @@ func (s ReportService) Summary() (response.TradeSummary, error) {
 		Select("COALESCE(SUM(amount_cents),0)").Scan(&out.TotalPaidCents).Error; err != nil {
 		return out, err
 	}
-	out.TotalPaidCents += abnormalTotal
+	// 异常渠道收款（迟到支付等）单独合计，不并入有效收款（增量续写【修改原因=R5】）
+	out.TotalAbnormalCents = abnormalTotal
 	if err := s.deps.DB.Model(&model.Refund{}).
 		Select("COALESCE(SUM(amount_cents),0)").
 		Where("channel_status = ?", model.ChannelSuccess).Scan(&out.TotalRefundedCents).Error; err != nil {

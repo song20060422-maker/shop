@@ -142,7 +142,8 @@
   const captchaRequiredLength = ref(6)
   // 验证函数
   const checkUsername = (rule, value, callback) => {
-    if (value.length < 5) {
+    // 演示账号 ops1/wh1/cs1 仅 4 位；后端仅要求非空，这里放宽为 >=3（GVA 上游默认 5）
+    if (value.length < 3) {
       return callback(new Error('请输入正确的用户名'))
     } else {
       callback()

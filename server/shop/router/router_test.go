@@ -447,7 +447,12 @@ func TestRefundFlow(t *testing.T) {
 	rr = doJSON(r, "GET", "/api/cs/refunds?status=pending", "", cs, nil)
 	list = parseBody(t, rr)["refunds"].([]interface{})
 	rid2 := list[0].(map[string]interface{})["id"].(string)
+	// REF-03（增量续写 R2 修复后）：审核必须携带非空原因，空原因会被拒绝
 	rr = doJSON(r, "POST", "/api/cs/refunds/"+rid2+"/decide", `{"approve":true}`, cs, nil)
+	if rr.Code == http.StatusOK {
+		t.Fatalf("空原因审核应被拒绝（REF-03）: %s", rr.Body.String())
+	}
+	rr = doJSON(r, "POST", "/api/cs/refunds/"+rid2+"/decide", `{"approve":true,"reason":"凭证核验通过"}`, cs, nil)
 	statusOK(t, rr, http.StatusOK, "同意后渠道失败仍 2xx")
 	if res := parseBody(t, rr); res["status"] != "FAILED" {
 		t.Fatalf("渠道失败状态错误: %s", rr.Body.String())

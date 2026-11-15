@@ -55,6 +55,7 @@ type ProductStat struct {
 	Occupied      int    `json:"occupied"`
 	ShippedQty    int    `json:"shippedQty"`
 	PaidCents     int64  `json:"paidCents"`
+	AbnormalCents int64  `json:"abnormalCents"` // 异常渠道收款，与有效收款分开显示（OPS-03）
 	RefundedCents int64  `json:"refundedCents"`
 }
 
@@ -63,6 +64,7 @@ type ProductStat struct {
 type TradeSummary struct {
 	Products           []ProductStat    `json:"products"`
 	TotalPaidCents     int64            `json:"totalPaidCents"`
+	TotalAbnormalCents int64            `json:"totalAbnormalCents"` // 异常渠道收款合计（BR-14：不得并入有效收款）
 	TotalRefundedCents int64            `json:"totalRefundedCents"`
 	OrderCount         int64            `json:"orderCount"`
 	StatusCount        map[string]int64 `json:"statusCount"`

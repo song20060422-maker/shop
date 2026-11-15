@@ -3,6 +3,7 @@ import { useRouterStore } from '@/pinia/modules/router'
 import getPageTitle from '@/utils/page'
 import router from '@/router'
 import Nprogress from 'nprogress'
+import { ElMessage } from 'element-plus'
 import 'nprogress/nprogress.css'
 
 // 配置 NProgress
@@ -196,7 +197,16 @@ router.beforeEach(async (to, from) => {
       return to
     }
 
-    return to.matched.length ? true : { path: '/layout/404' }
+    // 兜底路由 catchAll 也算未匹配（岗位隔离）：回退到本角色首页，避免生硬的 404 页
+    const reallyMatched = to.matched.length > 0 && !to.matched.some((m) => m.path.includes('catchAll'))
+    if (reallyMatched) return true
+
+    const fallback = userStore.userInfo.authority?.defaultRouter
+    if (fallback && router.hasRoute(fallback) && to.name !== fallback) {
+      ElMessage.warning('当前岗位无权访问该页面，已返回本岗位首页')
+      return { name: fallback }
+    }
+    return { path: '/layout/404' }
   }
 
   // 未登录跳转登录页

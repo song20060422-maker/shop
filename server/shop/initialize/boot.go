@@ -36,6 +36,10 @@ func Boot() (*service.ServiceGroup, config.Config, error) {
 		return nil, cfg, err
 	}
 	group := service.NewServiceGroup(service.Deps{DB: db, Now: now, Cfg: cfg, Channel: ch})
+	// 超时关单后台调度：管理端进程同样兜底关闭到期待付款订单（PROD-10，增量续写）。
+	// CloseExpired 幂等，与买家端调度器并发执行安全；stop 通道随进程生命周期存活。
+	stopScheduler := make(chan struct{})
+	group.StartCloseExpiredLoop(cfg.CloseExpiredInterval(), stopScheduler)
 	if global.GVA_LOG != nil {
 		if _, isAli := group.Channel.(*service.AlipayChannel); isAli {
 			global.GVA_LOG.Info("shop 业务模块初始化完成（支付渠道：支付宝沙箱）")

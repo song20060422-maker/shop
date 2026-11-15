@@ -56,6 +56,11 @@ func main() {
 	if cfg.System.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+	// 超时关单后台调度：生产环境兜底关闭到期待付款订单并释放占用（PROD-10，增量续写）
+	stopScheduler := make(chan struct{})
+	defer close(stopScheduler)
+	g.StartCloseExpiredLoop(cfg.CloseExpiredInterval(), stopScheduler)
+
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 	shoprouter.InitShopRouter(r.Group(""), g, cfg, time.Now)

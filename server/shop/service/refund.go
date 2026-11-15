@@ -325,18 +325,41 @@ func (s RefundService) callChannel(refund model.Refund, csID uint64, expectedCha
 				"渠道退款失败，保留待处理记录等待重试")
 		}
 
-		// 渠道成功：订单进入已退款；库存恢复受 restored 闸门保护，只做一次。
-		// I-18：RowsAffected 必须为 1——订单不在可退款状态（重复推进/并发竞争）时整体回滚，
-		// 退款单不落成功、库存不恢复。
-		res := tx.Model(&model.Order{}).
-			Where("order_no = ? AND status IN ?", refund.OrderNo,
-				[]string{model.OrderStatusRefundRequested, model.OrderStatusRefundFailed}).
-			Updates(map[string]interface{}{"status": model.OrderStatusRefunded, "updated_at": now})
-		if res.Error != nil {
-			return res.Error
-		}
-		if res.RowsAffected != 1 {
-			return NewBizError(3010, "订单不在可退款状态，退款推进被拒绝")
+		// 渠道成功：按退款来源分流推进（增量续写【修改原因=R4】：
+		// abnormal_late 对应订单早已关闭，原逻辑要求订单处于可退款状态导致
+		// 异常退款单重试必然 RowsAffected=0 整体回滚，违反 ABN-06 可重试要求）。
+		if result.Source == model.RefundSourceAbnormalLate {
+			// 迟到支付场景：不改订单状态（订单保持 closed/cancelled）、
+			// 绝不恢复库存（红线 2/3）；异常记录 pending -> handled，
+			// RowsAffected==1 闸门保证同一异常记录不会被二次推进。
+			res := tx.Model(&model.AbnormalPayment{}).
+				Where("order_no = ? AND status = ?", refund.OrderNo, model.AbnormalPending).
+				Updates(map[string]interface{}{
+					"status":     model.AbnormalHandled,
+					"handled_by": csID,
+					"handled_at": now,
+					"refund_id":  result.ID,
+				})
+			if res.Error != nil {
+				return res.Error
+			}
+			if res.RowsAffected != 1 {
+				return NewBizError(3010, "异常收款不在待处理状态，退款推进被拒绝")
+			}
+		} else {
+			// 售前退款：订单进入已退款；库存恢复受 restored 闸门保护，只做一次。
+			// I-18：RowsAffected 必须为 1——订单不在可退款状态（重复推进/并发竞争）时整体回滚，
+			// 退款单不落成功、库存不恢复。
+			res := tx.Model(&model.Order{}).
+				Where("order_no = ? AND status IN ?", refund.OrderNo,
+					[]string{model.OrderStatusRefundRequested, model.OrderStatusRefundFailed}).
+				Updates(map[string]interface{}{"status": model.OrderStatusRefunded, "updated_at": now})
+			if res.Error != nil {
+				return res.Error
+			}
+			if res.RowsAffected != 1 {
+				return NewBizError(3010, "订单不在可退款状态，退款推进被拒绝")
+			}
 		}
 		updates := map[string]interface{}{
 			"channel_status": model.ChannelSuccess,

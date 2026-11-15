@@ -228,6 +228,7 @@ func refundView(r model.Refund) gin.H {
 		"fail_reason":    refundFailReason(r),
 		"channel_status": r.ChannelStatus,
 		"audit_status":   r.AuditStatus,
+		"restored":       r.Restored,
 		"retry_count":    r.RetryCount,
 		"retryCount":     r.RetryCount,
 		"created_at":     ts(r.CreatedAt),
@@ -716,21 +717,25 @@ func (a *CompatApi) OpsSummary(c *gin.Context) {
 			"shippedQty":     it.ShippedQty,
 			"paid_total":     it.PaidCents,
 			"paidCents":      it.PaidCents,
+			"abnormal_cents": it.AbnormalCents,
+			"abnormalCents":  it.AbnormalCents,
 			"refunded_total": it.RefundedCents,
 			"refundedCents":  it.RefundedCents,
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"code":           0,
-		"msg":            "ok",
-		"products":       items,
-		"paid_total":     sum.TotalPaidCents,
-		"refunded_total": sum.TotalRefundedCents,
-		"order_count":    sum.OrderCount,
-		"status_count":   sum.StatusCount,
+		"code":               0,
+		"msg":                "ok",
+		"products":           items,
+		"paid_total":         sum.TotalPaidCents,
+		"abnormal_total":     sum.TotalAbnormalCents,
+		"refunded_total":     sum.TotalRefundedCents,
+		"order_count":        sum.OrderCount,
+		"status_count":       sum.StatusCount,
 		"data": gin.H{
 			"products":           items,
 			"totalPaidCents":     sum.TotalPaidCents,
+			"totalAbnormalCents": sum.TotalAbnormalCents,
 			"totalRefundedCents": sum.TotalRefundedCents,
 			"orderCount":         sum.OrderCount,
 			"statusCount":        sum.StatusCount,
@@ -973,12 +978,12 @@ func (a *CompatApi) WarehouseShip(c *gin.Context) {
 	}
 	body := bindAny(c)
 	carrier := strOf(body, "carrier", "express")
-	if carrier == "" {
-		carrier = "顺丰"
-	}
 	trackingNo := strOf(body, "tracking_no", "trackingNo")
-	if trackingNo == "" {
-		trackingNo = fmt.Sprintf("SF%d", a.now().UnixNano()%1000000000)
+	// SHIP-02：承运方与运单号去空白后不能为空，空参必须拒绝且不产生发货记录
+	// （增量续写【修改原因=R1】：删除原来的"顺丰"/自动单号兜底，兜底会绕过必填校验）。
+	if carrier == "" || trackingNo == "" {
+		a.failJSON(c, service.NewBizError(1000, "承运方和运单号不能为空"))
+		return
 	}
 	shipped, err := a.s.ShipmentService.Ship(claims.UserID, o.OrderNo, carrier, trackingNo)
 	if err != nil {
@@ -1027,13 +1032,12 @@ func (a *CompatApi) CSRefundDecide(c *gin.Context) {
 	}
 	body := bindAny(c)
 	approve, _ := boolOf(body, "approve")
+	// REF-03：客服同意/拒绝都必须填写非空原因，空原因拒绝且不改变审核状态
+	// （增量续写【修改原因=R2】：删除自动填充默认文案的兜底）。
 	reason := strOf(body, "reason", "audit_reason")
 	if reason == "" {
-		if approve {
-			reason = "客服审核同意退款"
-		} else {
-			reason = "客服审核拒绝退款"
-		}
+		a.failJSON(c, service.ErrReasonRequired)
+		return
 	}
 	updated, err := a.s.RefundService.Audit(claims.UserID, r.OrderNo, approve, reason)
 	if err != nil {
@@ -1160,9 +1164,12 @@ func (a *CompatApi) CSExceptionRefund(c *gin.Context) {
 		return
 	}
 	body := bindAny(c)
+	// ABN-04：客服处理迟到支付必须填写非空原因，无原因不能处理
+	// （增量续写【修改原因=R3】：删除自动填充默认原因的兜底）。
 	reason := strOf(body, "reason")
 	if reason == "" {
-		reason = "客服处理迟到支付，发起异常退款"
+		a.failJSON(c, service.ErrReasonRequired)
+		return
 	}
 	rf, err := a.s.RefundService.HandleAbnormal(claims.UserID, ab.ChannelTxnID, reason)
 	if err != nil {

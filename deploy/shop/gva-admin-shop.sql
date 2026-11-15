@@ -33,14 +33,14 @@ WHERE m.name IN ('shopAdmin', 'shopOps', 'shopWarehouse', 'shopCs') AND m.delete
   AND NOT EXISTS (SELECT 1 FROM sys_authority_menus am
                   WHERE am.sys_base_menu_id = m.id AND am.sys_authority_authority_id = a.aid);
 
--- ---------- 2.1 历史外链菜单修正：买家端已拆分为独立 Gin 服务（:8090） ----------
+-- ---------- 2.1 历史外链菜单修正：买家端已拆分为独立 Gin 服务（:8080） ----------
 -- gva 前端判断外链看的是菜单 name（normalMode.vue: index = routerInfo.name，含 http 才 window.open），
 -- 只改 path 会导致 permission.js 跳过路由注册 + router.push({name:'shopDemo'}) 找不到路由 → 点击无反应。
 -- 因此 name 与 path 必须同时置为 URL。
 UPDATE sys_base_menus
-SET name = 'http://127.0.0.1:8090/shop', path = 'http://127.0.0.1:8090/shop',
+SET name = 'http://127.0.0.1:8080/shop', path = 'http://127.0.0.1:8080/shop',
     title = '商城买家端', icon = 'shop', updated_at = NOW(3)
-WHERE name IN ('shopDemo', 'http://127.0.0.1:8090/shop') AND deleted_at IS NULL;
+WHERE name IN ('shopDemo', 'http://127.0.0.1:8080/shop', 'http://127.0.0.1:8090/shop') AND deleted_at IS NULL;
 
 -- ---------- 3. 接口注册（sys_apis，分组「商城管理」） ----------
 INSERT INTO sys_apis (created_at, updated_at, deleted_at, path, description, api_group, method)
@@ -146,6 +146,20 @@ WHERE m.name IN ('shopAdmin', 'shopCs') AND m.deleted_at IS NULL
   AND NOT EXISTS (SELECT 1 FROM sys_authority_menus am WHERE am.sys_base_menu_id = m.id AND am.sys_authority_authority_id = 9003);
 
 -- Casbin 最小权限：运营只能调 /shop/ops/**、仓库只能调 /shop/warehouse/**、客服只能调 /shop/cs/**
+-- 另需 GVA 框架自身接口（动态菜单 / 用户信息 / 登出黑名单 / 自助设置），
+-- 否则前端登录后拿不到菜单树，动态路由注册失败会 404。
+INSERT INTO casbin_rule (ptype, v0, v1, v2)
+SELECT 'p', a.aid, x.path, x.method
+FROM (SELECT 9001 AS aid UNION SELECT 9002 UNION SELECT 9003) a
+CROSS JOIN (
+  SELECT '/menu/getMenu' AS path, 'POST' AS method
+  UNION SELECT '/user/getUserInfo', 'GET'
+  UNION SELECT '/jwt/jsonInBlacklist', 'POST'
+  UNION SELECT '/user/setSelfInfo', 'PUT'
+  UNION SELECT '/user/setSelfSetting', 'PUT'
+) x
+WHERE NOT EXISTS (SELECT 1 FROM casbin_rule c WHERE c.ptype = 'p' AND c.v0 = a.aid AND c.v1 = x.path AND c.v2 = x.method);
+
 INSERT INTO casbin_rule (ptype, v0, v1, v2)
 SELECT 'p', 9001, x.path, x.method
 FROM (
