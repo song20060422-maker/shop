@@ -20,9 +20,12 @@ function Req {
     $resp = $_.Exception.Response
     if ($null -eq $resp) { return @{ code = -1; body = ($_.Exception.Message) } }
     $sc = [int]$resp.StatusCode
-    $stream = $resp.GetResponseStream()
-    $reader = New-Object System.IO.StreamReader($stream)
-    $txt = $reader.ReadToEnd()
+    $txt = $_.ErrorDetails.Message
+    if (-not $txt) {
+      $stream = $resp.GetResponseStream()
+      $reader = New-Object System.IO.StreamReader($stream)
+      $txt = $reader.ReadToEnd()
+    }
     return @{ code = $sc; body = $txt }
   }
 }
@@ -45,8 +48,8 @@ function Notify { param($orderNo, $txn, $amount, $sign)
   return (Req Post '/api/pay/notify' ('{"orderNo":"' + $orderNo + '","channelTxnId":"' + $txn + '","amountCents":' + $amount + ',"sign":"' + $sign + '"}') $null)
 }
 
-function NewOrder { param($tok, $pid, $qty)
-  return (Req Post '/api/orders' ('{"productId":' + $pid + ',"qty":' + $qty + '}') $tok)
+function NewOrder { param($tok, $prodId, $qty)
+  return (Req Post '/api/orders' ('{"productId":' + $prodId + ',"qty":' + $qty + '}') $tok)
 }
 
 function Avail { param($sku)
@@ -65,7 +68,7 @@ function Check {
 function Reset { Req Post '/api/demo/reset' '{}' $null | Out-Null }
 
 function SetRefundMode { param($mode, $tok)
-  return (Req Post '/api/pay/channel-mode' ('{"refundMode":"' + $mode + '"}') $tok)
+  return (Req Post '/api/pay/channel-mode' ('{"mode":"' + $mode + '"}') $tok)
 }
 
 function ExpireAll { param($tok) return (Req Post '/api/test/expire-orders' '{}' $tok) }
