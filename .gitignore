@@ -1,0 +1,26 @@
+# 依赖与构建产物
+node_modules/
+dist/
+bin/
+*.exe
+
+# 日志与临时文件
+*.log
+log/
+!docs/evidence/**
+*.tmp
+*.bak
+
+# AI/IDE 工具目录（非交付物）
+.claude/
+.codex/
+.cursor/
+.trae/
+.aone_copilot/
+.codebuddy/
+.idea/
+.vscode/
+
+# 系统文件
+Thumbs.db
+.DS_Store
