@@ -1,237 +1,460 @@
+<!-- <!doctype html> -->
 <!doctype html>
+<!-- <html lang="zh-CN"> -->
 <html lang="zh-CN">
+<!-- <head> -->
   <head>
+<!-- <meta charset="utf-8" /> -->
     <meta charset="utf-8" />
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
       content="Shop 商城买家端交易原型，覆盖下单、支付、取消、发货查询和售前退款。"
     />
+<!-- <title>Shop 商城 · 买家端</title> -->
     <title>Shop 商城 · 买家端</title>
+<!-- <link rel="stylesheet" href="/shop/assets/shop.css" /> -->
     <link rel="stylesheet" href="/shop/assets/shop.css" />
+<!-- </head> -->
   </head>
+<!-- <body class="buyer-page buyer-view-market"> -->
   <body class="buyer-page buyer-view-market">
+<!-- <svg class="icon-sprite" aria-hidden="true"> -->
     <svg class="icon-sprite" aria-hidden="true">
+<!-- <symbol id="i-store" viewBox="0 0 24 24"> -->
       <symbol id="i-store" viewBox="0 0 24 24">
+<!-- <path d="M3 9.5 4.7 4h14.6L21 9.5" /> -->
         <path d="M3 9.5 4.7 4h14.6L21 9.5" />
+<!-- <path d="M5 13v7h14v-7" /> -->
         <path d="M5 13v7h14v-7" />
+<!-- <path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0" /> -->
         <path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0" />
+<!-- <path d="M9 20v-4h6v4" /> -->
         <path d="M9 20v-4h6v4" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-user" viewBox="0 0 24 24"> -->
       <symbol id="i-user" viewBox="0 0 24 24">
+<!-- <circle cx="12" cy="8" r="3.5" /> -->
         <circle cx="12" cy="8" r="3.5" />
+<!-- <path d="M5 21a7 7 0 0 1 14 0" /> -->
         <path d="M5 21a7 7 0 0 1 14 0" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-building" viewBox="0 0 24 24"> -->
       <symbol id="i-building" viewBox="0 0 24 24">
+<!-- <path d="M4 21V5l8-2 8 2v16" /> -->
         <path d="M4 21V5l8-2 8 2v16" />
+<!-- <path d="M2 21h20M8 7h1M15 7h1M8 11h1M15 11h1M8 15h1M15 15h1M10 21v-3h4v3" /> -->
         <path d="M2 21h20M8 7h1M15 7h1M8 11h1M15 11h1M8 15h1M15 15h1M10 21v-3h4v3" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-bag" viewBox="0 0 24 24"> -->
       <symbol id="i-bag" viewBox="0 0 24 24">
+<!-- <path d="M5 8h14l-1 13H6L5 8Z" /> -->
         <path d="M5 8h14l-1 13H6L5 8Z" />
+<!-- <path d="M9 10V6a3 3 0 0 1 6 0v4" /> -->
         <path d="M9 10V6a3 3 0 0 1 6 0v4" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-receipt" viewBox="0 0 24 24"> -->
       <symbol id="i-receipt" viewBox="0 0 24 24">
+<!-- <path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z" /> -->
         <path d="M5 3h14v18l-3-2-4 2-4-2-3 2V3Z" />
+<!-- <path d="M8 8h8M8 12h8M8 16h5" /> -->
         <path d="M8 8h8M8 12h8M8 16h5" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-clock" viewBox="0 0 24 24"> -->
       <symbol id="i-clock" viewBox="0 0 24 24">
+<!-- <circle cx="12" cy="12" r="9" /> -->
         <circle cx="12" cy="12" r="9" />
+<!-- <path d="M12 7v5l3 2" /> -->
         <path d="M12 7v5l3 2" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-play" viewBox="0 0 24 24"> -->
       <symbol id="i-play" viewBox="0 0 24 24">
+<!-- <path d="m8 5 11 7-11 7V5Z" /> -->
         <path d="m8 5 11 7-11 7V5Z" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-chevron-right" viewBox="0 0 24 24"> -->
       <symbol id="i-chevron-right" viewBox="0 0 24 24">
+<!-- <path d="m9 18 6-6-6-6" /> -->
         <path d="m9 18 6-6-6-6" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-chevron-left" viewBox="0 0 24 24"> -->
       <symbol id="i-chevron-left" viewBox="0 0 24 24">
+<!-- <path d="m15 18-6-6 6-6" /> -->
         <path d="m15 18-6-6 6-6" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-x" viewBox="0 0 24 24"> -->
       <symbol id="i-x" viewBox="0 0 24 24">
+<!-- <path d="m6 6 12 12M18 6 6 18" /> -->
         <path d="m6 6 12 12M18 6 6 18" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-check" viewBox="0 0 24 24"> -->
       <symbol id="i-check" viewBox="0 0 24 24">
+<!-- <path d="m5 12 4 4L19 6" /> -->
         <path d="m5 12 4 4L19 6" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-warning" viewBox="0 0 24 24"> -->
       <symbol id="i-warning" viewBox="0 0 24 24">
+<!-- <path d="M10.3 4.2 2.7 18a2 2 0 0 0 1.8 3h15a2 2 0 0 0 1.8-3L13.7 4.2a2 2 0 0 0-3.4 0Z" /> -->
         <path d="M10.3 4.2 2.7 18a2 2 0 0 0 1.8 3h15a2 2 0 0 0 1.8-3L13.7 4.2a2 2 0 0 0-3.4 0Z" />
+<!-- <path d="M12 9v4M12 17h.01" /> -->
         <path d="M12 9v4M12 17h.01" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-truck" viewBox="0 0 24 24"> -->
       <symbol id="i-truck" viewBox="0 0 24 24">
+<!-- <path d="M3 6h11v11H3zM14 10h4l3 3v4h-7" /> -->
         <path d="M3 6h11v11H3zM14 10h4l3 3v4h-7" />
+<!-- <circle cx="7" cy="18" r="2" /> -->
         <circle cx="7" cy="18" r="2" />
+<!-- <circle cx="18" cy="18" r="2" /> -->
         <circle cx="18" cy="18" r="2" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-card" viewBox="0 0 24 24"> -->
       <symbol id="i-card" viewBox="0 0 24 24">
+<!-- <rect x="3" y="5" width="18" height="14" rx="2" /> -->
         <rect x="3" y="5" width="18" height="14" rx="2" />
+<!-- <path d="M3 10h18M7 15h3" /> -->
         <path d="M3 10h18M7 15h3" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-wifi-off" viewBox="0 0 24 24"> -->
       <symbol id="i-wifi-off" viewBox="0 0 24 24">
+<!-- <path d="m3 3 18 18M8.5 8.5A10 10 0 0 1 21 9M3 9a15 15 0 0 1 3.4-1M5.5 13a9 9 0 0 1 7-1.4M8.5 17a4.5 4.5 0 0 1... -->
         <path d="m3 3 18 18M8.5 8.5A10 10 0 0 1 21 9M3 9a15 15 0 0 1 3.4-1M5.5 13a9 9 0 0 1 7-1.4M8.5 17a4.5 4.5 0 0 1 7 0M12 21h.01" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-refresh" viewBox="0 0 24 24"> -->
       <symbol id="i-refresh" viewBox="0 0 24 24">
+<!-- <path d="M20 6v5h-5M4 18v-5h5" /> -->
         <path d="M20 6v5h-5M4 18v-5h5" />
+<!-- <path d="M6.1 9a7 7 0 0 1 11.5-2.6L20 11M4 13l2.4 4.6A7 7 0 0 0 18 15" /> -->
         <path d="M6.1 9a7 7 0 0 1 11.5-2.6L20 11M4 13l2.4 4.6A7 7 0 0 0 18 15" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-search" viewBox="0 0 24 24"> -->
       <symbol id="i-search" viewBox="0 0 24 24">
+<!-- <circle cx="11" cy="11" r="7" /> -->
         <circle cx="11" cy="11" r="7" />
+<!-- <path d="m20 20-4-4" /> -->
         <path d="m20 20-4-4" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-shield" viewBox="0 0 24 24"> -->
       <symbol id="i-shield" viewBox="0 0 24 24">
+<!-- <path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" /> -->
         <path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z" />
+<!-- <path d="m9 12 2 2 4-4" /> -->
         <path d="m9 12 2 2 4-4" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-package" viewBox="0 0 24 24"> -->
       <symbol id="i-package" viewBox="0 0 24 24">
+<!-- <path d="m12 3 9 5-9 5-9-5 9-5Z" /> -->
         <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+<!-- <path d="m3 8 9 5 9-5M3 8v10l9 5 9-5V8M12 13v10" /> -->
         <path d="m3 8 9 5 9-5M3 8v10l9 5 9-5V8M12 13v10" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-rotate" viewBox="0 0 24 24"> -->
       <symbol id="i-rotate" viewBox="0 0 24 24">
+<!-- <path d="M4 4v6h6M20 20v-6h-6" /> -->
         <path d="M4 4v6h6M20 20v-6h-6" />
+<!-- <path d="M5.8 15a7 7 0 0 0 11.5 2.6L20 14M4 10l2.7-3.6A7 7 0 0 1 18.2 9" /> -->
         <path d="M5.8 15a7 7 0 0 0 11.5 2.6L20 14M4 10l2.7-3.6A7 7 0 0 1 18.2 9" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-clipboard" viewBox="0 0 24 24"> -->
       <symbol id="i-clipboard" viewBox="0 0 24 24">
+<!-- <rect x="5" y="4" width="14" height="17" rx="2" /> -->
         <rect x="5" y="4" width="14" height="17" rx="2" />
+<!-- <path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4" /> -->
         <path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-wallet" viewBox="0 0 24 24"> -->
       <symbol id="i-wallet" viewBox="0 0 24 24">
+<!-- <path d="M4 6h15a2 2 0 0 1 2 2v11H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h13" /> -->
         <path d="M4 6h15a2 2 0 0 1 2 2v11H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h13" />
+<!-- <path d="M16 11h5v4h-5a2 2 0 0 1 0-4Z" /> -->
         <path d="M16 11h5v4h-5a2 2 0 0 1 0-4Z" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-copy" viewBox="0 0 24 24"> -->
       <symbol id="i-copy" viewBox="0 0 24 24">
+<!-- <rect x="8" y="8" width="12" height="12" rx="2" /> -->
         <rect x="8" y="8" width="12" height="12" rx="2" />
+<!-- <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /> -->
         <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-info" viewBox="0 0 24 24"> -->
       <symbol id="i-info" viewBox="0 0 24 24">
+<!-- <circle cx="12" cy="12" r="9" /> -->
         <circle cx="12" cy="12" r="9" />
+<!-- <path d="M12 11v5M12 8h.01" /> -->
         <path d="M12 11v5M12 8h.01" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-external" viewBox="0 0 24 24"> -->
       <symbol id="i-external" viewBox="0 0 24 24">
+<!-- <path d="M14 4h6v6M20 4l-9 9" /> -->
         <path d="M14 4h6v6M20 4l-9 9" />
+<!-- <path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" /> -->
         <path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-refund" viewBox="0 0 24 24"> -->
       <symbol id="i-refund" viewBox="0 0 24 24">
+<!-- <path d="M4 8h11a5 5 0 0 1 0 10H9" /> -->
         <path d="M4 8h11a5 5 0 0 1 0 10H9" />
+<!-- <path d="m8 4-4 4 4 4" /> -->
         <path d="m8 4-4 4 4 4" />
+<!-- <path d="M13 11v6M10.5 12.5h5M10.5 15.5h5" /> -->
         <path d="M13 11v6M10.5 12.5h5M10.5 15.5h5" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-lock" viewBox="0 0 24 24"> -->
       <symbol id="i-lock" viewBox="0 0 24 24">
+<!-- <rect x="5" y="10" width="14" height="11" rx="2" /> -->
         <rect x="5" y="10" width="14" height="11" rx="2" />
+<!-- <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" /> -->
         <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
+<!-- </symbol> -->
       </symbol>
+<!-- <symbol id="i-flask" viewBox="0 0 24 24"> -->
       <symbol id="i-flask" viewBox="0 0 24 24">
+<!-- <path d="M9 3h6M10 3v6L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3" /> -->
         <path d="M9 3h6M10 3v6L4.8 18a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14 9V3" />
+<!-- <path d="M7 15h10" /> -->
         <path d="M7 15h10" />
+<!-- </symbol> -->
       </symbol>
+<!-- </svg> -->
     </svg>
 
+<!-- <div class="buyer-app-shell"> -->
     <div class="buyer-app-shell">
+<!-- <header class="buyer-header"> -->
       <header class="buyer-header">
+<!-- <div class="buyer-header-inner"> -->
         <div class="buyer-header-inner">
+<!-- <a class="brand" href="/shop" aria-label="Shop 商城首页"> -->
           <a class="brand" href="/shop" aria-label="Shop 商城首页">
+<!-- <span class="brand-mark"><svg class="icon"><use href="#i-store"></use></svg></span> -->
             <span class="brand-mark"><svg class="icon"><use href="#i-store"></use></svg></span>
+<!-- <span> -->
             <span>
+<!-- Shop 商城 -->
               Shop 商城
+<!-- <small>LIVE COMMERCE · 交易可追溯</small> -->
               <small>LIVE COMMERCE · 交易可追溯</small>
+<!-- </span> -->
             </span>
+<!-- </a> -->
           </a>
+<!-- <div class="buyer-header-tools"> -->
           <div class="buyer-header-tools">
+<!-- <label class="sr-only" for="buyer-identity">切换买家身份</label> -->
             <label class="sr-only" for="buyer-identity">切换买家身份</label>
+<!-- <select id="buyer-identity" class="buyer-identity" aria-label="切换买家身份"></select> -->
             <select id="buyer-identity" class="buyer-identity" aria-label="切换买家身份"></select>
+<!-- <a class="staff-link" href="http://127.0.0.1:8099" target="_blank" rel="noreferrer"> -->
             <a class="staff-link" href="http://127.0.0.1:8099" target="_blank" rel="noreferrer">
+<!-- <svg class="icon"><use href="#i-building"></use></svg> -->
               <svg class="icon"><use href="#i-building"></use></svg>
+<!-- <span>员工入口</span> -->
               <span>员工入口</span>
+<!-- </a> -->
             </a>
+<!-- </div> -->
           </div>
+<!-- </div> -->
         </div>
+<!-- </header> -->
       </header>
 
+<!-- <main id="buyer-main" class="buyer-main"> -->
       <main id="buyer-main" class="buyer-main">
+<!-- <section class="market-column" aria-labelledby="market-title"> -->
         <section class="market-column" aria-labelledby="market-title">
+<!-- <div class="buyer-kicker">采购生命周期追踪 · 实时库存</div> -->
           <div class="buyer-kicker">采购生命周期追踪 · 实时库存</div>
+<!-- <section class="event-band"> -->
           <section class="event-band">
+<!-- <div class="event-copy"> -->
             <div class="event-copy">
+<!-- <div class="eyebrow"> -->
               <div class="eyebrow">
+<!-- <svg class="icon"><use href="#i-shield"></use></svg> -->
                 <svg class="icon"><use href="#i-shield"></use></svg>
+<!-- 标准商品 · 限量现货 -->
                 标准商品 · 限量现货
+<!-- </div> -->
               </div>
+<!-- <h1 id="market-title">少量标准商品，实时透明成交</h1> -->
               <h1 id="market-title">少量标准商品，实时透明成交</h1>
+<!-- <p>每笔订单锁定 10 分钟。支付、退款、发货与异常处理均按同一交易账本核验。</p> -->
               <p>每笔订单锁定 10 分钟。支付、退款、发货与异常处理均按同一交易账本核验。</p>
+<!-- </div> -->
             </div>
+<!-- <div class="event-stock" aria-live="polite"> -->
             <div class="event-stock" aria-live="polite">
+<!-- <div class="event-stock-item"> -->
               <div class="event-stock-item">
+<!-- <strong id="hero-stock">--</strong> -->
                 <strong id="hero-stock">--</strong>
+<!-- <span>当前可售</span> -->
                 <span>当前可售</span>
+<!-- </div> -->
               </div>
+<!-- <div class="event-stock-rule"></div> -->
               <div class="event-stock-rule"></div>
+<!-- <div class="event-stock-item"> -->
               <div class="event-stock-item">
+<!-- <strong id="hero-occupied">--</strong> -->
                 <strong id="hero-occupied">--</strong>
+<!-- <span>已占用</span> -->
                 <span>已占用</span>
+<!-- </div> -->
               </div>
+<!-- </div> -->
             </div>
+<!-- </section> -->
           </section>
 
+<!-- <div id="product-grid" class="product-grid" aria-live="polite"></div> -->
           <div id="product-grid" class="product-grid" aria-live="polite"></div>
 
+<!-- <section class="market-note" aria-label="交易规则"> -->
           <section class="market-note" aria-label="交易规则">
+<!-- <div class="market-note-item"> -->
             <div class="market-note-item">
+<!-- <strong>库存先占用</strong> -->
               <strong>库存先占用</strong>
+<!-- <span>下单即从可售数量扣除；关闭、取消或售前退款成功后按规则归还。</span> -->
               <span>下单即从可售数量扣除；关闭、取消或售前退款成功后按规则归还。</span>
+<!-- </div> -->
             </div>
+<!-- <div class="market-note-item"> -->
             <div class="market-note-item">
+<!-- <strong>支付幂等</strong> -->
               <strong>支付幂等</strong>
+<!-- <span>重复渠道通知只保留一次有效收款，同交易号不能归属两个订单。</span> -->
               <span>重复渠道通知只保留一次有效收款，同交易号不能归属两个订单。</span>
+<!-- </div> -->
             </div>
+<!-- <div class="market-note-item"> -->
             <div class="market-note-item">
+<!-- <strong>退款发货互斥</strong> -->
               <strong>退款发货互斥</strong>
+<!-- <span>退款申请后冻结仓库；发货与退款只有先到的一方能够形成最终结果。</span> -->
               <span>退款申请后冻结仓库；发货与退款只有先到的一方能够形成最终结果。</span>
+<!-- </div> -->
             </div>
+<!-- </section> -->
           </section>
+<!-- </section> -->
         </section>
 
+<!-- <aside class="orders-column" aria-labelledby="orders-title"> -->
         <aside class="orders-column" aria-labelledby="orders-title">
+<!-- <section class="orders-surface"> -->
           <section class="orders-surface">
+<!-- <div class="orders-surface-head"> -->
             <div class="orders-surface-head">
+<!-- <div> -->
               <div>
+<!-- <h2 id="orders-title">我的订单</h2> -->
                 <h2 id="orders-title">我的订单</h2>
+<!-- <p id="buyer-order-subtitle">当前买家交易状态</p> -->
                 <p id="buyer-order-subtitle">当前买家交易状态</p>
+<!-- </div> -->
               </div>
+<!-- <button class="icon-btn" type="button" data-action="refresh-orders" aria-label="刷新订单"> -->
               <button class="icon-btn" type="button" data-action="refresh-orders" aria-label="刷新订单">
+<!-- <svg class="icon"><use href="#i-refresh"></use></svg> -->
                 <svg class="icon"><use href="#i-refresh"></use></svg>
+<!-- </button> -->
               </button>
+<!-- </div> -->
             </div>
+<!-- <div id="buyer-mini-kpis" class="mini-kpis"></div> -->
             <div id="buyer-mini-kpis" class="mini-kpis"></div>
+<!-- <div id="order-tabs" class="order-tabs" role="tablist" aria-label="订单筛选"></div> -->
             <div id="order-tabs" class="order-tabs" role="tablist" aria-label="订单筛选"></div>
+<!-- <div id="order-list" class="order-list" aria-live="polite"></div> -->
             <div id="order-list" class="order-list" aria-live="polite"></div>
+<!-- </section> -->
           </section>
+<!-- </aside> -->
         </aside>
+<!-- </main> -->
       </main>
 
+<!-- <button class="demo-fab" type="button" data-action="open-demo"> -->
       <button class="demo-fab" type="button" data-action="open-demo">
+<!-- <svg class="icon"><use href="#i-flask"></use></svg> -->
         <svg class="icon"><use href="#i-flask"></use></svg>
+<!-- <span>验收场景</span> -->
         <span>验收场景</span>
+<!-- </button> -->
       </button>
 
+<!-- <nav class="buyer-mobile-nav" aria-label="买家端导航"> -->
       <nav class="buyer-mobile-nav" aria-label="买家端导航">
+<!-- <button class="active" type="button" data-view="market" aria-label="商品选购"> -->
         <button class="active" type="button" data-view="market" aria-label="商品选购">
+<!-- <svg class="icon"><use href="#i-bag"></use></svg> -->
           <svg class="icon"><use href="#i-bag"></use></svg>
+<!-- 选购 -->
           选购
+<!-- </button> -->
         </button>
+<!-- <button type="button" data-view="orders" aria-label="我的订单"> -->
         <button type="button" data-view="orders" aria-label="我的订单">
+<!-- <svg class="icon"><use href="#i-receipt"></use></svg> -->
           <svg class="icon"><use href="#i-receipt"></use></svg>
+<!-- 订单 -->
           订单
+<!-- </button> -->
         </button>
+<!-- <button type="button" data-action="open-demo" aria-label="演示场景"> -->
         <button type="button" data-action="open-demo" aria-label="演示场景">
+<!-- <svg class="icon"><use href="#i-flask"></use></svg> -->
           <svg class="icon"><use href="#i-flask"></use></svg>
+<!-- 演示 -->
           演示
+<!-- </button> -->
         </button>
+<!-- </nav> -->
       </nav>
+<!-- </div> -->
     </div>
 
+<!-- <div id="drawer-root"></div> -->
     <div id="drawer-root"></div>
+<!-- <div id="modal-root"></div> -->
     <div id="modal-root"></div>
+<!-- <div id="toast-root" class="toast-root" aria-live="assertive" aria-atomic="true"></div> -->
     <div id="toast-root" class="toast-root" aria-live="assertive" aria-atomic="true"></div>
 
     <script src="/shop/assets/domain.js"></script>
+// 执行：<script src="/shop/assets/buyer.js"></script>
     <script src="/shop/assets/buyer.js"></script>
+// 执行：</body>
   </body>
+// 执行：</html>
 </html>
